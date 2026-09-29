@@ -1,0 +1,10 @@
+{
+  "version": "1.41.0",
+  "name": "Outpost",
+  "source": "Asterra-v1.41.0-Outpost",
+  "bytes": 2426444,
+  "sha256": "f4c02547f362dc6fdfb344a10df441a8e28a5481748944466db87daa977cd24c",
+  "suites": 97,
+  "verified": true,
+  "built": "2026-09-28"
+}
