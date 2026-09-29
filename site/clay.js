@@ -14,7 +14,7 @@
     quake:{name:'Quake',tip:'hold to shake things loose',hue:'#ffb46b'},
     hole:{name:'Black hole',tip:'hold to swallow things · Shift spits them out',hue:'#8e7dff'},
     meteor:{name:'Meteor',tip:'click to strike · hold for a meteor shower',hue:'#ff7a59'},
-    paint:{name:'Paint',tip:'hold to paint in shifting colours · Shift washes it off',hue:'#ff9ecb'}
+    paint:{name:'Paint',tip:'hold to paint in shifting colors · Shift washes it off',hue:'#ff9ecb'}
   };
   var ORDER=['grab','scatter','gather','swirl','raise','smooth','quake','hole','meteor','paint'];
   var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
