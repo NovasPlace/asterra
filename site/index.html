@@ -240,7 +240,14 @@ html.sculpting header,html.sculpting main,html.sculpting footer{cursor:none}
 .clay-size input::-moz-range-thumb{width:18px;height:18px;border:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#cfe9dc 60%,#8fb8a6);box-shadow:0 2px 6px rgba(0,0,0,.5)}
 @media (max-width:640px){.clay-size input{width:80px}.clay-size span{display:none}}
 
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.clay-open .hand,.orbit,.spin,.moon,.moon .face{animation:none}}
+/* zero gravity */
+.float{animation:drift var(--fd,10s) ease-in-out infinite;animation-delay:var(--fo,0s)}
+@keyframes drift{
+  0%,100%{translate:0 0;rotate:0deg}
+  25%{translate:var(--fx) calc(var(--fy)*-1);rotate:var(--fr)}
+  50%{translate:calc(var(--fx)*-.4) calc(var(--fy)*.7);rotate:calc(var(--fr)*-.5)}
+  75%{translate:calc(var(--fx)*-1) calc(var(--fy)*-.35);rotate:calc(var(--fr)*.6)}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.clay-open .hand,.orbit,.spin,.moon,.moon .face,.float{animation:none}}
 </style>
 </head>
 <body>
@@ -446,6 +453,18 @@ html.sculpting header,html.sculpting main,html.sculpting footer{cursor:none}
   $('mark-nav').innerHTML=mark(26);
   $('mark-sys').innerHTML=mark(62);
 
+  // Zero gravity: blocks bob and turn on their own slow rhythms. The drift uses the translate and rotate
+  // properties, so it adds to the sculpt tools' transforms instead of replacing them.
+  (function(){
+    var r=97531,rnd=function(){r=(r*16807)%2147483647;return r/2147483647;};
+    document.querySelectorAll('.version,.hero h1,.hero .lede,.hero-cta .btn,.keys .key,.head,.ladder li,.card,.pipe,.stat,.exact-copy p,.closing,.system').forEach(function(el){
+      var big=el.offsetWidth>420,s=el.style;el.classList.add('float');
+      s.setProperty('--fd',(8+rnd()*7).toFixed(1)+'s');s.setProperty('--fo',(-rnd()*15).toFixed(1)+'s');
+      s.setProperty('--fx',((big?2:3)+rnd()*(big?2:4)).toFixed(1)+'px');s.setProperty('--fy',((big?3:4)+rnd()*(big?3:5)).toFixed(1)+'px');
+      s.setProperty('--fr',((rnd()<.5?-1:1)*(big?.25:.5+rnd()*.9)).toFixed(2)+'deg');
+    });
+  })();
+
   // The moons carry the links set on the system.
   var sys=document.querySelector('.system');
   sys.querySelectorAll('[data-link]').forEach(function(a){
@@ -453,19 +472,21 @@ html.sculpting header,html.sculpting main,html.sculpting footer{cursor:none}
     if(url)a.href=url;else{a.classList.add('unset');a.setAttribute('aria-disabled','true');a.querySelector('.tag').textContent='Link coming soon';}
   });
 
-  // A slow starfield behind the page.
+  // A starfield with depth: near stars are bigger, drift faster and slide further as you scroll.
   var sky=$('sky'),ctx=sky.getContext('2d'),stars=[],W=0,H=0,dpr=1;
   function seedStars(){
     dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;sky.width=W*dpr;sky.height=H*dpr;
     var n=Math.round(W*H/5200),r=1234567;stars=[];
     var rnd=function(){r=(r*16807)%2147483647;return r/2147483647;};
-    for(var i=0;i<n;i++)stars.push({x:rnd()*W,y:rnd()*H,s:rnd()*1.1+.25,t:rnd()*6.28,w:.4+rnd()*1.2,h:rnd()});
+    for(var i=0;i<n;i++){var z=.15+Math.pow(rnd(),1.6)*.85;stars.push({x:rnd()*W,y:rnd()*H,z:z,s:.25+z*1.2,t:rnd()*6.28,w:.4+rnd()*1.2,h:rnd()});}
   }
   function drawStars(now){
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+    var sy=reduced?0:scrollY,t=reduced?0:now;
     for(var i=0;i<stars.length;i++){var s=stars[i],a=.35+.4*(reduced?.5:.5+.5*Math.sin(s.t+now*.001*s.w));
+      var x=((s.x+t*.0035*s.z)%W+W)%W,y=((s.y-sy*.3*s.z)%H+H)%H;
       ctx.fillStyle=s.h<.12?'rgba(255,190,220,'+a+')':s.h<.26?'rgba(170,200,255,'+a+')':'rgba(235,245,255,'+a+')';
-      ctx.fillRect(s.x,s.y,s.s,s.s);}
+      ctx.fillRect(x,y,s.s,s.s);}
   }
   function loop(now){drawStars(now);if(!reduced)requestAnimationFrame(loop);}
   seedStars();requestAnimationFrame(loop);
