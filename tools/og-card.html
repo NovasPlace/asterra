@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Asterra preview card</title>
+<!-- The link-preview image (site/og.png, 1200x630). Render with tools/og-card.ps1. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=block" rel="stylesheet">
+<style>
+:root{--bg:#0b121b;--ink:#e8f4ef;--mute:#9db1be;--mint:#a3e6c0;--sky:#6fb6ff;--violet:#b9a4ff;--pink:#ff9ecb;--sun:#ffd58a}
+*{box-sizing:border-box}
+html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:var(--bg)}
+body{position:relative;color:var(--ink);font-family:Inter,'Segoe UI',sans-serif}
+#sky{position:absolute;inset:0}
+.glow{position:absolute;inset:0;background:
+  radial-gradient(620px 420px at 88% -8%,rgba(185,164,255,.20),transparent 70%),
+  radial-gradient(560px 380px at -6% 40%,rgba(111,182,255,.13),transparent 70%),
+  radial-gradient(700px 360px at 50% 118%,rgba(163,230,192,.10),transparent 70%)}
+.brand{position:absolute;left:64px;top:52px;display:flex;align-items:center;gap:16px;font:700 34px/1 Sora,sans-serif;letter-spacing:.02em}
+.orb{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.03) 45%),rgba(16,25,35,.9);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.35),0 6px 26px rgba(111,182,255,.22)}
+h1{position:absolute;left:64px;top:172px;margin:0;font:700 92px/1.06 Sora,sans-serif;letter-spacing:-.03em}
+h1 .line2{display:inline-block;background:linear-gradient(90deg,var(--mint),var(--sky) 60%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{position:absolute;left:66px;top:398px;margin:0;font:500 30px/1.3 Inter,sans-serif;color:var(--mute)}
+.sub b{color:var(--ink);font-weight:600}
+.chip{position:absolute;left:64px;bottom:58px;display:flex;align-items:center;gap:14px;padding:12px 24px 12px 12px;border-radius:999px;font:600 22px/1 Inter,sans-serif;color:#0b1a14;
+  background:radial-gradient(120% 140% at 30% 0%,#e9fff4,var(--mint) 55%,#6fcf9f);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 10px 34px rgba(163,230,192,.35)}
+.chip .hand{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(11,26,20,.12)}
+.chip svg{width:24px;height:24px;stroke:#0b1a14;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.url{position:absolute;right:64px;bottom:70px;font:500 22px/1 Inter,sans-serif;color:var(--mute);letter-spacing:.01em}
+/* the meteor that knocked "alive." loose */
+.crater{position:absolute;left:968px;top:292px;width:420px;height:420px;margin:-210px 0 0 -210px;border-radius:50%;mix-blend-mode:screen;
+  background:radial-gradient(circle,rgba(255,244,214,.95) 0 4%,rgba(255,176,96,.8) 11%,rgba(255,96,64,.45) 25%,rgba(140,40,70,.18) 44%,transparent 64%)}
+.wave{position:absolute;left:968px;top:292px;border-radius:50%;border:2px solid rgba(255,190,150,.55);box-shadow:0 0 18px rgba(255,122,89,.35)}
+.wave.w1{width:300px;height:300px;margin:-150px 0 0 -150px}
+.wave.w2{width:520px;height:520px;margin:-260px 0 0 -260px;opacity:.35}
+.bit{position:absolute;font:700 92px/1 Sora,sans-serif;letter-spacing:-.03em}
+.streak{position:absolute;left:1040px;top:120px;width:190px;height:6px;border-radius:6px;transform-origin:0 50%;transform:rotate(125deg);
+  background:linear-gradient(90deg,rgba(255,244,214,.95),rgba(255,122,89,.6) 40%,transparent)}
+</style>
+</head>
+<body>
+<canvas id="sky" width="1200" height="630"></canvas>
+<div class="glow"></div>
+<div class="crater"></div>
+<div class="wave w1"></div>
+<div class="wave w2"></div>
+
+<div class="brand"><span class="orb" id="mark"></span>Asterra</div>
+<h1>Sculpt a world.<br><span class="line2">Watch it come</span></h1>
+<p class="sub">A god game where <b>everything is clay</b>.<br>Even the website.</p>
+<div class="chip"><span class="hand"><svg viewBox="0 0 24 24"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4a1.5 1.5 0 0 1 3 0v7M14 11V5.5a1.5 1.5 0 0 1 3 0V13M17 12v-2a1.5 1.5 0 0 1 3 0v4c0 4-3 7-7 7h-1c-3 0-4.5-1.5-6-4l-2.5-4a1.5 1.5 0 0 1 2.5-1.6L8 14"/></svg></span>Sculpt the page</div>
+<div class="url">novasplace.github.io/asterra</div>
+
+<!-- "alive." flung around the impact, each letter in its own colour, the way the site's Paint and Meteor leave them -->
+<span class="bit" style="left:880px;top:176px;color:var(--violet);transform:rotate(-18deg) scale(1.1)">a</span>
+<span class="bit" style="left:1052px;top:196px;color:var(--pink);transform:rotate(24deg)">l</span>
+<span class="bit" style="left:1092px;top:300px;color:var(--sun);transform:rotate(58deg) scale(.8)">i</span>
+<span class="bit" style="left:840px;top:330px;color:var(--sky);transform:rotate(-40deg) scale(.85)">v</span>
+<span class="bit" style="left:1000px;top:392px;color:var(--mint);transform:rotate(12deg) scale(1.25)">e</span>
+<span class="bit" style="left:930px;top:250px;color:var(--pink);transform:rotate(-8deg) scale(.7)">.</span>
+<div class="streak"></div>
+
+<script>
+// Asterra's own mark (ui/bubbles.js asterraMark).
+document.getElementById('mark').innerHTML='<svg viewBox="0 0 32 32" width="40" height="40"><defs><linearGradient id="a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0fff7"/><stop offset=".5" stop-color="#a3e6c0"/><stop offset="1" stop-color="#6fb6ff"/></linearGradient><linearGradient id="o" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b9a4ff"/><stop offset="1" stop-color="#ff9ecb"/></linearGradient></defs><path d="M4.4 20.3A12 4.2 -14 0 1 27.6 14.5" fill="none" stroke="url(#o)" stroke-width="1.2" opacity=".45"/><path d="M14.6 11 7.4 27.4M17.4 11l7.2 16.4" fill="none" stroke="url(#a)" stroke-width="2.8" stroke-linecap="round"/><path d="M27.6 14.5A12 4.2 -14 0 1 4.4 20.3" fill="none" stroke="url(#o)" stroke-width="1.7" stroke-linecap="round"/><circle cx="26.1" cy="17.4" r="1.6" fill="#7ab8ee"/><path d="M16 1.4 17.2 5.8 21.6 7 17.2 8.2 16 12.6 14.8 8.2 10.4 7 14.8 5.8Z" fill="#fff"/></svg>';
+// A fixed starfield, the same every render.
+var c=document.getElementById('sky').getContext('2d'),r=1234567,rnd=function(){r=(r*16807)%2147483647;return r/2147483647;};
+for(var i=0;i<230;i++){var x=rnd()*1200,y=rnd()*630,s=rnd()*1.3+.3,h=rnd(),a=.3+rnd()*.55;
+  c.fillStyle=h<.12?'rgba(255,190,220,'+a+')':h<.26?'rgba(170,200,255,'+a+')':'rgba(235,245,255,'+a+')';c.fillRect(x,y,s,s);}
+</script>
+</body>
+</html>
