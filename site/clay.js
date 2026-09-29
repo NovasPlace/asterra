@@ -198,11 +198,45 @@
   function snap(){var a=new Float32Array(pieces.length*N);pieces.forEach(function(p,i){var o=i*N;a[o]=p.tx;a[o+1]=p.ty;a[o+2]=p.tr;a[o+3]=p.ts;a[o+4]=p.hue;});return a;}
   function load(a){pieces.forEach(function(p,i){var o=i*N;p.tx=a[o];p.ty=a[o+1];p.tr=a[o+2];p.ts=a[o+3];p.hue=a[o+4];tint(p);wake(p);});}
   function remember(){undo.push(snap());if(undo.length>60)undo.shift();redo.length=0;buttons();}
-  function back(){if(!undo.length)return;redo.push(snap());load(undo.pop());buttons();}
-  function forward(){if(!redo.length)return;undo.push(snap());load(redo.pop());buttons();}
-  function reset(){if(!pieces.some(function(p){return p.tx||p.ty||p.tr||p.ts!==1||p.hue>=0;}))return;remember();pieces.forEach(function(p){p.tx=p.ty=p.tr=0;p.ts=1;p.hue=-1;tint(p);wake(p);});}
+  function back(){if(!undo.length)return;redo.push(snap());load(undo.pop());buttons();keep();}
+  function forward(){if(!redo.length)return;undo.push(snap());load(redo.pop());buttons();keep();}
+  function reset(){if(!pieces.some(function(p){return p.tx||p.ty||p.tr||p.ts!==1||p.hue>=0;}))return;remember();pieces.forEach(function(p){p.tx=p.ty=p.tr=0;p.ts=1;p.hue=-1;tint(p);wake(p);});keep();}
   function buttons(){$('clay-undo').disabled=!undo.length;$('clay-redo').disabled=!redo.length;}
   function same(a,b){for(var i=0;i<a.length;i++)if(Math.abs(a[i]-b[i])>1e-4)return false;return true;}
+
+  // Memory: each visitor's page is kept in their own browser and flies back into shape when they return.
+  // A save only fits the page it was made on, so it is stamped with the page's letters and dropped when they change.
+  var KEY='asterra-clay-v1',print='';
+  function stamp(){
+    if(!print){var s=pieces.length+'|',h=2166136261;pieces.forEach(function(p){s+=p.letter?p.el.textContent:'#';});
+      for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}print=(h>>>0).toString(36);}
+    return print;
+  }
+  function keep(){
+    clearTimeout(keep.t);keep.t=setTimeout(function(){
+      var list=[];pieces.forEach(function(p,i){if(p.tx||p.ty||p.tr||p.ts!==1||p.hue>=0)list.push([i,+p.tx.toFixed(1),+p.ty.toFixed(1),+p.tr.toFixed(3),+p.ts.toFixed(3),Math.round(p.hue)]);});
+      try{if(list.length)localStorage.setItem(KEY,JSON.stringify({v:1,f:stamp(),p:list}));else localStorage.removeItem(KEY);}catch(e){}
+    },300);
+  }
+  function recall(){
+    var s=null;try{s=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}
+    if(!s||s.v!==1||!Array.isArray(s.p)||!s.p.length)return;
+    prepare();
+    if(s.f!==stamp()){try{localStorage.removeItem(KEY);}catch(e){}return;}
+    s.p.forEach(function(a){
+      var p=Array.isArray(a)&&pieces[a[0]];if(!p||a.length<6||!a.every(isFinite))return;
+      p.tx=a[1];p.ty=a[2];p.tr=a[3];p.ts=Math.max(.1,Math.min(4,a[4]));p.hue=a[5]<0?-1:a[5]%360;tint(p);wake(p);
+    });
+    welcome();
+  }
+  function welcome(){
+    var w=document.createElement('div');w.className='clay-back glass';w.setAttribute('role','status');
+    w.innerHTML='Welcome back. The page is how you left it. <button type="button" class="linkish">Start fresh</button>';
+    dock.insertBefore(w,dock.firstChild);
+    var gone=function(){w.classList.add('bye');setTimeout(function(){w.remove();},400);};
+    w.querySelector('button').addEventListener('click',function(){reset();gone();});
+    setTimeout(gone,9000);
+  }
 
   // Input: while sculpting, a press on the page is a stroke, not a click. Only the dock stays live.
   function free(el){return !el||dock.contains(el);}
@@ -221,7 +255,7 @@
     if(!down||(e&&e.pointerId!==down.id))return;
     if(tool==='grab')fling();
     if(tool==='paint')ring.style.setProperty('--tool',TOOLS.paint.hue);
-    down=null;if(undo.length&&same(undo[undo.length-1],snap()))undo.pop();buttons();
+    down=null;if(undo.length&&same(undo[undo.length-1],snap()))undo.pop();buttons();keep();
   }
   addEventListener('pointerup',end,true);addEventListener('pointercancel',end,true);
   document.addEventListener('click',function(e){if(on&&!free(e.target)){e.preventDefault();e.stopPropagation();}},true);
@@ -257,4 +291,6 @@
   var hero=document.querySelector('.hero-cta .btn');
   if(hero&&'IntersectionObserver' in window)new IntersectionObserver(function(es){dock.classList.toggle('tucked',es[0].isIntersecting);}).observe(hero);
   sized();
+  // Once the fonts are in, letters sit where they will stay: measure again if already split, then bring back a saved page.
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){if(ready)measure();recall();});
 })();
