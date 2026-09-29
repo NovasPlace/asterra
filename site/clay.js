@@ -258,6 +258,10 @@
     down=null;if(undo.length&&same(undo[undo.length-1],snap()))undo.pop();buttons();keep();
   }
   addEventListener('pointerup',end,true);addEventListener('pointercancel',end,true);
+  // iPhones scroll the page under a finger despite touch-action:none, which cancels the stroke as it starts.
+  // Refusing the touch itself keeps the finger on the clay; the pointer events still arrive.
+  document.addEventListener('touchstart',function(e){if(on&&!free(e.target))e.preventDefault();},{passive:false,capture:true});
+  document.addEventListener('touchmove',function(e){if(on&&(down||!free(e.target)))e.preventDefault();},{passive:false,capture:true});
   document.addEventListener('click',function(e){if(on&&!free(e.target)){e.preventDefault();e.stopPropagation();}},true);
   addEventListener('keydown',function(e){
     shift=e.shiftKey;if(!on||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
